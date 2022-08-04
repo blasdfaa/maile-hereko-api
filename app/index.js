@@ -1,7 +1,7 @@
 import "dotenv/config";
 import express from "express";
 import mongoose from "mongoose";
-import router from "./app/routes/index.js";
+import authRouter from "./routes/auth.js";
 
 const PORT = process.env.PORT || 8000;
 
@@ -17,7 +17,12 @@ mongoose
   });
 
 app.use(express.json());
-app.use("/api", router);
+app.use("/api", authRouter);
+
+// 404
+app.use((_, res) => {
+  res.status(404).json({ ok: false, message: "endpoint not found" });
+});
 
 app.listen(PORT, (err) => {
   if (err) console.log(err);

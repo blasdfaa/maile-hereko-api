@@ -3,11 +3,11 @@ import { loginHandler, profileHandler, registerHandler } from "../controller/aut
 import { registerValidation } from "../lib/validations/auth.js";
 import checkAuth from "../middleware/checkAuth.js";
 
-const router = Router();
+const authRouter = Router();
 
 // Auth
-router.post("/auth/register", registerValidation, registerHandler);
-router.post("/auth/login", loginHandler);
-router.get("/auth/me", checkAuth, profileHandler);
+authRouter.post("/auth/register", registerValidation, registerHandler);
+authRouter.post("/auth/login", loginHandler);
+authRouter.get("/auth/me", checkAuth, profileHandler);
 
-export default router;
+export default authRouter;

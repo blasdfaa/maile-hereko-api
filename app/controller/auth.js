@@ -2,6 +2,7 @@ import { validationResult } from "express-validator";
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
 import UserModel from "../model/UserModel.js";
+import { formatValidationMessage } from "../utils/formatValidationMessage.js";
 
 export const registerHandler = async (req, res) => {
   try {
