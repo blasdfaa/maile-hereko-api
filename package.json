@@ -1,0 +1,18 @@
+{
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "nodemon -r dotenv/config ./app/server.js dotenv_config_path=.env.local ",
+    "start": "node -r dotenv/config  ./app/server.js"
+  },
+  "dependencies": {
+    "bcryptjs": "^2.4.3",
+    "dotenv": "^16.0.1",
+    "express": "^4.18.1",
+    "express-validator": "^6.14.2",
+    "init": "^0.1.2",
+    "jsonwebtoken": "^8.5.1",
+    "mongoose": "^6.5.1",
+    "nodemon": "^2.0.19"
+  }
+}
