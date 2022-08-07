@@ -11,6 +11,7 @@ const doc = {
     version: "1.0.0",
   },
   host: process.env.SWAGGER_BASE_URL,
+  schemes: process.env.NODE_ENV === "development" ? ["http"] : ["https"],
   // что-то типа моделей
   definitions: {
     User: {

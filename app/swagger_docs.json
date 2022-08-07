@@ -8,7 +8,7 @@
   "host": "maile-hereko-api.herokuapp.com",
   "basePath": "/",
   "schemes": [
-    "http"
+    "https"
   ],
   "paths": {
     "/api/auth/register": {
