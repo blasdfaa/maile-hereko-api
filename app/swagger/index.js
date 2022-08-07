@@ -1,29 +1,28 @@
-import { join, dirname } from "path";
-import { fileURLToPath } from "url";
-import swaggerAutogen from "swagger-autogen";
+import { dirname, join } from 'path';
+import swaggerAutogen from 'swagger-autogen';
+import { fileURLToPath } from 'url';
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 
 const doc = {
   // общая информация
   info: {
-    title: "MaileHereko API",
-    version: "1.0.0",
+    title: 'MaileHereko API',
+    version: '1.0.0',
   },
   host: process.env.SWAGGER_BASE_URL,
-  schemes: process.env.NODE_ENV === "development" ? ["http"] : ["https"],
+  schemes: process.env.NODE_ENV === 'development' ? ['http'] : ['https'],
   // что-то типа моделей
   definitions: {
-    User: {
-      email: "example@gmail.com",
+    Author: {
       movies_ids: [],
       tv_shows_ids: [],
       suggestions_ids: [],
       manual_suggestions_ids: [],
     },
-    Credentials: {
-      email: "example@gmail.com",
-      password: "some_password_value",
+    LoginInput: {
+      email: 'example@gmail.com',
+      password: 'some_password_value',
     },
     Success: {
       ok: true,
@@ -33,53 +32,53 @@ const doc = {
     },
     SuccessLogin: {
       ok: true,
-      token: "access_token_example",
+      token: 'access_token_example',
       user: {
-        $ref: "#/definitions/User",
+        $ref: '#/definitions/User',
       },
     },
     EmailAlready: {
       ok: false,
-      message: "User with such an email already exists",
+      message: 'User with such an email already exists',
     },
     FailedRegister: {
       ok: false,
-      message: "Failed to register. Try again",
+      message: 'Failed to register. Try again',
     },
     FailedLogin: {
       ok: false,
-      message: "Failed to login. Try again",
+      message: 'Failed to login. Try again',
     },
     InvalidEmail: {
       ok: false,
       email: {
-        message: "Invalid email format",
+        message: 'Invalid email format',
       },
     },
     IncorrectCredentials: {
       ok: false,
-      message: "Incorrect email or password",
+      message: 'Incorrect email or password',
     },
     InvalidPassword: {
       ok: false,
       password: {
-        message: "Password must be at least <count> characters long",
+        message: 'Password must be at least <count> characters long',
       },
     },
     IncorrectAccessToken: {
       ok: false,
-      message: "Access denied",
+      message: 'Access denied',
     },
     NotFoundUser: {
       ok: false,
-      message: "User not found",
+      message: 'User not found',
     },
   },
 };
 
 // путь и название генерируемого файла
-const outputFile = join(__dirname, "../swagger_docs.json");
+const outputFile = join(__dirname, '../swagger_docs.json');
 // массив путей к роутерам
-const endpointsFiles = [join(__dirname, "../index.js")];
+const endpointsFiles = [join(__dirname, '../index.js')];
 
 swaggerAutogen(/* options */)(outputFile, endpointsFiles, doc);
