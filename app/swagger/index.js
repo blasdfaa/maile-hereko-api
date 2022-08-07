@@ -4,6 +4,7 @@ import swaggerAutogen from "swagger-autogen";
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 
+console.log(process.env.SWAGGER_BASE_URL);
 const doc = {
   // общая информация
   info: {
