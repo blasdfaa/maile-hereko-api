@@ -5,7 +5,7 @@
     "version": "1.0.0",
     "description": ""
   },
-  "host": "localhost:8000",
+  "host": "maile-hereko-api.herokuapp.com",
   "basePath": "/",
   "schemes": [
     "http"
@@ -125,26 +125,6 @@
             "schema": {
               "$ref": "#/definitions/NotFoundUser"
             }
-          }
-        }
-      }
-    },
-    "/api/movie/": {
-      "get": {
-        "description": "",
-        "parameters": [
-          {
-            "name": "authorization",
-            "in": "header",
-            "type": "string"
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "OK"
-          },
-          "500": {
-            "description": "Internal Server Error"
           }
         }
       }
