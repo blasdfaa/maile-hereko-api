@@ -10,6 +10,7 @@ const doc = {
     title: "MaileHereko API",
     version: "1.0.0",
   },
+  host: process.env.SWAGGER_BASE_URL,
   // что-то типа моделей
   definitions: {
     User: {
