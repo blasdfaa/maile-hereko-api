@@ -10,7 +10,7 @@ const doc = {
     title: "MaileHereko API",
     version: "1.0.0",
   },
-  host: "localhost:8000",
+  host: process.env.SWAGGER_BASE_URL,
   // что-то типа моделей
   definitions: {
     User: {
@@ -81,4 +81,4 @@ const outputFile = join(__dirname, "../swagger_docs.json");
 // массив путей к роутерам
 const endpointsFiles = [join(__dirname, "../index.js")];
 
-swaggerAutogen(/*options*/)(outputFile, endpointsFiles, doc);
+swaggerAutogen(/* options */)(outputFile, endpointsFiles, doc);
