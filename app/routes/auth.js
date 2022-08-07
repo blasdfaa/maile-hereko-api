@@ -5,7 +5,6 @@ import checkAuth from "../middleware/checkAuth.js";
 
 const authRouter = Router();
 
-// Auth
 authRouter.post("/auth/register", registerValidation, registerHandler);
 authRouter.post("/auth/login", loginHandler);
 authRouter.get("/auth/me", checkAuth, profileHandler);

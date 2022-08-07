@@ -5,6 +5,34 @@ import UserModel from "../model/UserModel.js";
 import { formatValidationMessage } from "../utils/formatValidationMessage.js";
 
 export const registerHandler = async (req, res) => {
+  // #swagger.tags = ['Auth']
+  // #swagger.summary = 'Register user'
+  /* #swagger.parameters['body'] = {
+        in: 'body',
+        required: 'true',
+        type: 'object',
+        schema: { $ref: '#/definitions/Credentials' }
+} */
+  /* #swagger.responses[201] = {
+        description: 'Created user',
+        schema: { $ref: '#/definitions/Success' }
+} */
+  /* #swagger.responses[400] = {
+        description: 'Invalid email',
+        schema: { $ref: '#/definitions/InvalidEmail' }
+} */
+  /* #swagger.responses[400] = {
+        description: 'Invalid password',
+        schema: { $ref: '#/definitions/InvalidPassword' }
+} */
+  /* #swagger.responses[400] = {
+        description: 'Already email used',
+        schema: { $ref: '#/definitions/EmailAlready' }
+} */
+  /* #swagger.responses[500] = {
+        description: 'Some error',
+        schema: { $ref: '#/definitions/FailedRegister' }
+} */
   try {
     const errors = validationResult(req).formatWith(formatValidationMessage);
 
@@ -38,6 +66,34 @@ export const registerHandler = async (req, res) => {
 };
 
 export const loginHandler = async (req, res) => {
+  // #swagger.tags = ['Auth']
+  // #swagger.summary = 'Log in user'
+  /* #swagger.parameters['body'] = {
+        in: 'body',
+        required: 'true',
+        type: 'object',
+        schema: { $ref: '#/definitions/Credentials' }
+} */
+  /* #swagger.responses[201] = {
+        description: 'Login success',
+        schema: { $ref: '#/definitions/SuccessLogin' }
+} */
+  /* #swagger.responses[400] = {
+        description: 'Invalid email',
+        schema: { $ref: '#/definitions/InvalidEmail' }
+} */
+  /* #swagger.responses[400] = {
+        description: 'Invalid password',
+        schema: { $ref: '#/definitions/InvalidPassword' }
+} */
+  /* #swagger.responses[400] = {
+        description: 'Incorrect user data',
+        schema: { $ref: '#/definitions/IncorrectCredentials' }
+} */
+  /* #swagger.responses[500] = {
+        description: 'Some error',
+        schema: { $ref: '#/definitions/FailedLogin' }
+} */
   try {
     const errors = validationResult(req).formatWith(formatValidationMessage);
 
@@ -63,6 +119,25 @@ export const loginHandler = async (req, res) => {
 };
 
 export const profileHandler = async (req, res) => {
+  // #swagger.tags = ['Auth']
+  // #swagger.summary = 'Get user data'
+  /* #swagger.parameters['authorization'] = {
+        in: 'header',
+        required: 'true',
+        type: 'string',
+} */
+  /* #swagger.responses[200] = {
+        description: 'Success',
+        schema: { $ref: '#/definitions/User' }
+} */
+  /* #swagger.responses[401] = {
+        description: 'Access denied',
+        schema: { $ref: '#/definitions/IncorrectAccessToken' }
+} */
+  /* #swagger.responses[404] = {
+        description: 'User not found',
+        schema: { $ref: '#/definitions/NotFoundUser' }
+} */
   try {
     const user = await UserModel.findById(req.userId).select([
       "email",
@@ -77,6 +152,6 @@ export const profileHandler = async (req, res) => {
     res.status(200).json({ ...user._doc });
   } catch (error) {
     console.log("error: ", error);
-    res.status(500).json({ ok: false, message: "Access denied" });
+    res.status(401).json({ ok: false, message: "Access denied" });
   }
 };
