@@ -28,7 +28,7 @@ export const pickShortMoviesData = (movies = []) => {
   return movies.map(({ id, title, poster_path, genres, vote_average }) => ({
     id,
     title,
-    poster: `${poster_path}`,
+    poster: `https://image.tmdb.org/t/p/original${poster_path}`,
     genres: getGenresNames(genres),
     rating: vote_average,
   }));
