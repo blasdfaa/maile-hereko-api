@@ -3,7 +3,7 @@
   "type": "module",
   "scripts": {
     "dev": "nodemon -r dotenv/config ./app/index.js dotenv_config_path=.env.local ",
-    "start": "node -r dotenv/config ./app/index.js",
+    "start": "node ./app/index.js",
     "swagger:gen": "node ./app/swagger/index.js"
   },
   "dependencies": {
