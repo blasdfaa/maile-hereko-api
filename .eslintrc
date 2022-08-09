@@ -16,6 +16,7 @@
     "plugin:prettier/recommended" // Make this the last element so prettier config overrides other formatting rules
   ],
   "plugins": ["simple-import-sort", "import"],
+  "globals": { "_": true }, // for lodash
   "rules": {
     "no-console": ["error", { "allow": ["warn", "error", "info"] }],
     "no-unused-vars": ["error", { "argsIgnorePattern": "^_" }],
