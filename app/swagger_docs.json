@@ -11,45 +11,6 @@
     "https"
   ],
   "paths": {
-    "/api/auth/register": {
-      "post": {
-        "tags": [
-          "Auth"
-        ],
-        "summary": "Register user",
-        "description": "",
-        "parameters": [
-          {
-            "name": "body",
-            "in": "body",
-            "required": true,
-            "schema": {
-              "$ref": "#/definitions/Credentials"
-            }
-          }
-        ],
-        "responses": {
-          "201": {
-            "description": "Created user",
-            "schema": {
-              "$ref": "#/definitions/Success"
-            }
-          },
-          "400": {
-            "description": "Already email used",
-            "schema": {
-              "$ref": "#/definitions/EmailAlready"
-            }
-          },
-          "500": {
-            "description": "Some error",
-            "schema": {
-              "$ref": "#/definitions/FailedRegister"
-            }
-          }
-        }
-      }
-    },
     "/api/auth/login": {
       "post": {
         "tags": [
@@ -97,7 +58,7 @@
         "tags": [
           "Auth"
         ],
-        "summary": "Get user data",
+        "summary": "Get author data",
         "description": "",
         "parameters": [
           {
@@ -111,7 +72,7 @@
           "200": {
             "description": "Success",
             "schema": {
-              "$ref": "#/definitions/User"
+              "$ref": "#/definitions/Author"
             }
           },
           "401": {
@@ -128,16 +89,68 @@
           }
         }
       }
+    },
+    "/api/watched": {
+      "get": {
+        "description": "",
+        "parameters": [
+          {
+            "name": "s",
+            "in": "query",
+            "type": "string"
+          },
+          {
+            "name": "media_type",
+            "in": "query",
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "404": {
+            "description": "Not Found"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      }
+    },
+    "/api/tv/{id}": {
+      "get": {
+        "description": "",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {}
+      }
+    },
+    "/api/movie/{id}": {
+      "get": {
+        "description": "",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {}
+      }
     }
   },
   "definitions": {
-    "User": {
+    "Author": {
       "type": "object",
       "properties": {
-        "email": {
-          "type": "string",
-          "example": "example@gmail.com"
-        },
         "movies_ids": {
           "type": "array",
           "example": [],
@@ -160,7 +173,7 @@
         }
       }
     },
-    "Credentials": {
+    "LoginInput": {
       "type": "object",
       "properties": {
         "email": {
