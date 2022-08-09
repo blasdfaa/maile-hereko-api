@@ -12,6 +12,7 @@ import { filterBy } from '../utils/filterBy.js';
 import { searchBy } from '../utils/searchBy.js';
 
 export const getAll = async (req, res) => {
+  // #swagger.tags = ['Auth']
   try {
     const author = await findAuthor();
     if (!author) return res.status(404).json({ ok: false, message: 'User not found' });
@@ -39,6 +40,7 @@ export const getAll = async (req, res) => {
 };
 
 export const getOne = (type) => async (req, res) => {
+  // #swagger.tags = ['Auth']
   try {
     const author = await findAuthor();
     if (!author) return res.status(404).json({ ok: false, message: 'User not found' });
