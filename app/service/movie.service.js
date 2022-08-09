@@ -1,35 +1,78 @@
-import axios from 'axios';
+import { movieModel, tvShowModel } from '../model/movie.model.js';
 
-import { genres } from '../utils/genres.js';
-
-const MOVIE_DB_KEY = process.env.MOVIE_DB_KEY;
-
-const getGenresNames = (genres = []) => {
-  return genres.map((genre) => genre.name);
+export const getOneMovieById = async (id) => {
+  return movieModel.findOne({ id }).lean();
 };
 
-export const getGenresByIds = (ids) => {
-  return ids.map((id) => genres.find((genre) => genre.id === id).name);
+export const getOneTVShowById = async (id) => {
+  return tvShowModel.findOne({ id }).lean();
 };
 
-export const getMediaByIds = async (ids, type = 'movie') => {
-  const getById = async (id) => {
-    const { data } = await axios.get(`https://api.themoviedb.org/3/${type}/${id}`, {
-      params: { api_key: MOVIE_DB_KEY },
-    });
+export const getMoviesByIds = async (ids) => {
+  return movieModel.find({ id: { $in: ids } }).exec();
+};
 
-    return data;
-  };
-
-  return await Promise.all(ids.map((id) => getById(id)));
+export const getTVShowsByIds = async (ids) => {
+  return tvShowModel.find({ id: { $in: ids } }).exec();
 };
 
 export const pickShortMoviesData = (movies = []) => {
-  return movies.map(({ id, title, poster_path, genres, vote_average }) => ({
+  return movies.map(({ id, title, poster_path, vote_average }) => ({
     id,
     title,
-    poster: `https://image.tmdb.org/t/p/original${poster_path}`,
-    genres: getGenresNames(genres),
+    poster: poster_path ? `https://image.tmdb.org/t/p/original${poster_path}` : null,
     rating: vote_average,
   }));
 };
+
+export const pickMoviesPageFields = ({
+  id,
+  title,
+  poster_path,
+  genres,
+  vote_average,
+  overview,
+  media_type,
+  release_date,
+  runtime,
+}) => ({
+  id,
+  title,
+  poster: poster_path ? `https://image.tmdb.org/t/p/original${poster_path}` : null,
+  rating: vote_average,
+  genres,
+  description: overview,
+  media_type,
+  release_date,
+  runtime,
+});
+
+export const pickTVShowPageFields = ({
+  id,
+  name,
+  poster_path,
+  vote_average,
+  status,
+  first_air_date,
+  last_air_date,
+  number_of_episodes,
+  number_of_seasons,
+  episode_run_time,
+  genres,
+  overview,
+  media_type,
+}) => ({
+  id,
+  name,
+  poster: poster_path ? `https://image.tmdb.org/t/p/original${poster_path}` : null,
+  rating: vote_average,
+  status,
+  first_air_date,
+  last_air_date,
+  number_of_episodes,
+  number_of_seasons,
+  episode_run_time,
+  genres,
+  description: overview,
+  media_type,
+});

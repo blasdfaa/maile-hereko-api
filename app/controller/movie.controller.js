@@ -1,42 +1,55 @@
-import { getMediaByIds, pickShortMoviesData } from '../service/movie.service.js';
+import {
+  getMoviesByIds,
+  getOneMovieById,
+  getOneTVShowById,
+  getTVShowsByIds,
+  pickMoviesPageFields,
+  pickShortMoviesData,
+  pickTVShowPageFields,
+} from '../service/movie.service.js';
 import { findAuthor } from '../service/user.service.js';
+import { filterBy } from '../utils/filterBy.js';
+import { searchBy } from '../utils/searchBy.js';
 
-export const movieHandler = async (req, res) => {
+export const getAll = async (req, res) => {
   try {
     const author = await findAuthor();
-    // if (!author) return res.status(404).json({ ok: false, message: 'User not found' });
+    if (!author) return res.status(404).json({ ok: false, message: 'User not found' });
 
-    const movies = await getMediaByIds(author.movies_ids, 'movie');
-    const tvShows = await getMediaByIds(author.tv_shows_ids, 'tv');
+    const watchedMovies = await getMoviesByIds(author.movies_ids);
+    const watchedTVShows = await getTVShowsByIds(author.tv_shows_ids);
+    let searchResult = [...watchedMovies, ...watchedTVShows];
 
-    // const token = (req.headers.authorization || '').replace(/Bearer\s?/, '');
-    // const isLoggedIn = Boolean(token);
+    const hasQueryParams = Object.keys(req.query).length > 0;
+    const searchQuery = await req.query;
 
-    // if (isLoggedIn) {
-    //   console.log(token);
-    //   // const user = await findUser({});
-    // }
+    if (hasQueryParams) {
+      const searchString = searchQuery.s?.toLowerCase() ?? '';
+      const searchMediaType = searchQuery.media_type?.toLowerCase() ?? '';
 
-    // const response = await axios.get('https://api.themoviedb.org/3/movie/top_rated', {
-    //   params: {
-    //     page: 1,
-    //     api_key: MOVIEDB_KEY,
-    //   },
-    // });
+      searchResult = searchResult
+        .filter(searchBy('original_title', searchString))
+        .filter(filterBy('media_type', searchMediaType));
+    }
 
-    // const movies = response.data.results.map(({ id, title, genre_ids, poster_path, vote_average }) => ({
-    //   id,
-    //   name: title,
-    //   genres: getGenresByIds(genre_ids),
-    //   image_url: `https://image.tmdb.org/t/p/original${poster_path}`,
-    //   rating: vote_average,
-    // }));
+    res.status(200).json({ ok: true, results: pickShortMoviesData(searchResult) });
+  } catch (error) {
+    res.status(500).json({ ok: false, message: 'Failed to get movies. Try again' });
+  }
+};
 
-    // const data = { ...response.data, results: [...movies] };
+export const getOne = (type) => async (req, res) => {
+  try {
+    const author = await findAuthor();
+    if (!author) return res.status(404).json({ ok: false, message: 'User not found' });
 
-    const shortMovies = pickShortMoviesData([...movies, ...tvShows]);
+    const movieId = req.params.id;
 
-    res.status(200).json({ ok: true, results: shortMovies });
+    const movie = type === 'movie' ? await getOneMovieById(movieId) : await getOneTVShowById(movieId);
+    if (!movie) return res.status(404).json({ ok: false, message: 'Movie not found' });
+
+    const result = type === 'movie' ? pickMoviesPageFields(movie) : pickTVShowPageFields(movie);
+    res.status(200).json({ ok: true, ...result });
   } catch (error) {
     res.status(500).json({ ok: false, message: 'Failed to get movies. Try again' });
   }
