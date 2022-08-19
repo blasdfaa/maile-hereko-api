@@ -17,11 +17,12 @@ export const getTVShowsByIds = async (ids) => {
 };
 
 export const pickShortMoviesData = (movies = []) => {
-  return movies.map(({ id, title, poster_path, vote_average }) => ({
+  return movies.map(({ id, title, poster_path, vote_average, media_type }) => ({
     id,
     title,
     poster: poster_path ? `https://image.tmdb.org/t/p/original${poster_path}` : null,
     rating: vote_average,
+    media_type,
   }));
 };
 
