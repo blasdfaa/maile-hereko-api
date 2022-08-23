@@ -1,4 +1,5 @@
 import mongoose from 'mongoose';
+import mongooseAggregatePaginate from 'mongoose-aggregate-paginate-v2';
 
 const movieSchema = new mongoose.Schema({
   adult: Boolean,
@@ -29,13 +30,22 @@ const movieSchema = new mongoose.Schema({
   spoken_languages: [{ iso_3166_1: String, name: String }],
   status: String,
   tagline: String,
-  title: String,
+  title: { type: String, index: true },
   video: Boolean,
   vote_average: Number,
   vote_count: Number,
   media_type: String,
 });
 
+movieSchema.plugin(mongooseAggregatePaginate);
+
 export const movieModel = mongoose.model('Movie', movieSchema, 'movies');
+
+movieModel.aggregatePaginate.options = {
+  customLabels: {
+    docs: 'result',
+    totalDocs: 'totalItems',
+  },
+};
 
 export const tvShowModel = mongoose.model('Series', movieSchema, 'series');

@@ -16,6 +16,16 @@ export const getTVShowsByIds = async (ids) => {
   return tvShowModel.find({ id: { $in: ids } }).exec();
 };
 
+export const searchByQuery = async (query, page = 1, limit = 10) => {
+  const aggregate = movieModel.aggregate([
+    { $unionWith: { coll: 'series' } },
+    { $project: { _id: 0, id: 1, title: 1, poster_path: 1, vote_average: 1, media_type: 1 } },
+    { $match: { title: { $regex: query, $options: 'i' } } },
+    { $sort: { title: 1, _id: 1 } },
+  ]);
+  return movieModel.aggregatePaginate(aggregate, { page, limit });
+};
+
 export const pickShortMoviesData = (movies = []) => {
   return movies.map(({ id, title, poster_path, vote_average, media_type }) => ({
     id,

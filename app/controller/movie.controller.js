@@ -6,13 +6,14 @@ import {
   pickMoviesPageFields,
   pickShortMoviesData,
   pickTVShowPageFields,
+  searchByQuery,
 } from '../service/movie.service.js';
 import { findAuthor } from '../service/user.service.js';
 import { HTTP_STATUS } from '../utils/constants.js';
 import { filterBy } from '../utils/filterBy.js';
 import { searchBy } from '../utils/searchBy.js';
 
-export const getAll = async (req, res) => {
+export const getWatched = async (req, res) => {
   // #swagger.tags = ['Auth']
   try {
     const author = await findAuthor();
@@ -41,7 +42,7 @@ export const getAll = async (req, res) => {
   }
 };
 
-export const getOne = (type) => async (req, res) => {
+export const getById = (type) => async (req, res) => {
   // #swagger.tags = ['Auth']
   try {
     const author = await findAuthor();
@@ -57,5 +58,20 @@ export const getOne = (type) => async (req, res) => {
   } catch (error) {
     console.error('error: ', error);
     res.status(HTTP_STATUS.serverError).json({ ok: false, message: 'Failed to get movies. Try again' });
+  }
+};
+
+export const getBySearch = async (req, res) => {
+  try {
+    // example.com/api/search?q=someValue
+    const query = req.query.q;
+    const page = req.query.page;
+    const limit = req.query.limit;
+
+    const result = await searchByQuery(query, page, limit);
+
+    res.status(HTTP_STATUS.ok).json({ ok: true, ...result });
+  } catch (error) {
+    console.error('error: ', error);
   }
 };

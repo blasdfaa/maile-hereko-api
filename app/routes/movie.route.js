@@ -4,8 +4,9 @@ import * as movieController from '../controller/movie.controller.js';
 
 const movieRouter = Router();
 
-movieRouter.get('/watched', movieController.getAll);
-movieRouter.get('/tv/:id', movieController.getOne('tv'));
-movieRouter.get('/movie/:id', movieController.getOne('movie'));
+movieRouter.get('/watched', movieController.getWatched);
+movieRouter.get('/search', movieController.getBySearch);
+movieRouter.get('/tv/:id', movieController.getById('tv'));
+movieRouter.get('/movie/:id', movieController.getById('movie'));
 
 export default movieRouter;
