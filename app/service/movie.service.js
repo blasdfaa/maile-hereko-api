@@ -61,7 +61,7 @@ export const pickMoviesPageFields = ({
 
 export const pickTVShowPageFields = ({
   id,
-  name,
+  title,
   poster_path,
   vote_average,
   status,
@@ -75,7 +75,7 @@ export const pickTVShowPageFields = ({
   media_type,
 }) => ({
   id,
-  name,
+  title,
   poster: poster_path ? `https://image.tmdb.org/t/p/original${poster_path}` : null,
   rating: vote_average,
   status,
