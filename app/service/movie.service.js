@@ -41,6 +41,7 @@ export const pickMoviesPageFields = ({
   id,
   title,
   poster_path,
+  backdrop_path,
   genres,
   vote_average,
   overview,
@@ -50,6 +51,7 @@ export const pickMoviesPageFields = ({
 }) => ({
   id,
   title,
+  backdrop_path: backdrop_path ? `https://image.tmdb.org/t/p/original${backdrop_path}` : null,
   poster: poster_path ? `https://image.tmdb.org/t/p/original${poster_path}` : null,
   rating: vote_average,
   genres,
@@ -63,6 +65,7 @@ export const pickTVShowPageFields = ({
   id,
   title,
   poster_path,
+  backdrop_path,
   vote_average,
   status,
   first_air_date,
@@ -76,6 +79,7 @@ export const pickTVShowPageFields = ({
 }) => ({
   id,
   title,
+  backdrop_path: backdrop_path ? `https://image.tmdb.org/t/p/original${backdrop_path}` : null,
   poster: poster_path ? `https://image.tmdb.org/t/p/original${poster_path}` : null,
   rating: vote_average,
   status,
