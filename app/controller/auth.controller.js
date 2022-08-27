@@ -39,6 +39,8 @@ export const loginHandler = async (req, res) => {
     const errors = validationResult(req).formatWith(formatValidationMessage);
     if (!errors.isEmpty()) return res.status(HTTP_STATUS.badRequest).json({ ok: false, ...errors.mapped() });
 
+
+
     const user = await findAuthor({ email: req.body.email });
     if (!user) {
       return res.status(HTTP_STATUS.badRequest).json({ ok: false, message: 'Incorrect email or password' });

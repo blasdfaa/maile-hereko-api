@@ -8,6 +8,7 @@ import swaggerUI from 'swagger-ui-express';
 
 import authRouter from './routes/auth.route.js';
 import movieRouter from './routes/movie.route.js';
+import suggestRouter from './routes/suggest.route.js';
 
 const PORT = process.env.PORT || 8000;
 
@@ -28,6 +29,7 @@ app.use(express.json());
 // Routes
 app.use('/api', authRouter);
 app.use('/api', movieRouter);
+app.use('/api', suggestRouter);
 
 // Swagger
 const swaggerFile = JSON.parse(fs.readFileSync('./app/swagger_docs.json'));
