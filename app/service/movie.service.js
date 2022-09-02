@@ -2,19 +2,19 @@ import authorModel from '../model/author.model.js';
 import { movieModel, tvShowModel } from '../model/movie.model.js';
 
 export const getOneMovieById = async (id) => {
-  return movieModel.findOne({ id }).lean();
+  return movieModel.findById(id).lean();
 };
 
 export const getOneTVShowById = async (id) => {
-  return tvShowModel.findOne({ id }).lean();
+  return tvShowModel.findById(id).lean();
 };
 
 export const getMoviesByIds = async (ids) => {
-  return movieModel.find({ id: { $in: ids } }).exec();
+  return movieModel.find({ _id: { $in: ids } }).exec();
 };
 
 export const getTVShowsByIds = async (ids) => {
-  return tvShowModel.find({ id: { $in: ids } }).exec();
+  return tvShowModel.find({ _id: { $in: ids } }).exec();
 };
 
 export const searchByQuery = async (query, page = 1, limit = 10) => {
@@ -26,13 +26,13 @@ export const searchByQuery = async (query, page = 1, limit = 10) => {
   const aggregate = movieModel.aggregate([
     { $unionWith: { coll: 'series' } },
     // Получить указанные поля
-    { $project: { _id: 0, id: 1, title: 1, poster_path: 1, vote_average: 1, media_type: 1, adult: 1 } },
+    { $project: { _id: 1, title: 1, poster_path: 1, vote_average: 1, media_type: 1, adult: 1 } },
     // Получить документы которые ещё не посоветовали.
-    { $match: { id: { $nin: suggestedMoviesIds } } },
+    { $match: { _id: { $nin: suggestedMoviesIds } } },
     // Если не указан параметр для поиска, вернутся все фильмы которые имеют заголовок
     { $match: { title: query ? { $regex: query, $options: 'i' } : { $exists: true } } },
     // Добавить поле "is_watched" просмотренным фильмам
-    { $addFields: { is_watched: { $cond: [{ $in: ['$id', watchedMoviesIds] }, true, false] } } },
+    { $addFields: { is_watched: { $cond: [{ $in: ['$_id', watchedMoviesIds] }, true, false] } } },
     { $sort: { title: 1, _id: 1 } },
   ]);
 
@@ -40,8 +40,8 @@ export const searchByQuery = async (query, page = 1, limit = 10) => {
 };
 
 export const pickShortMoviesData = (movies = []) => {
-  return movies.map(({ id, title, poster_path, vote_average, media_type, adult, ...other }) => ({
-    id,
+  return movies.map(({ _id, title, poster_path, vote_average, media_type, adult, ...other }) => ({
+    id: _id,
     title,
     poster: poster_path ? `https://image.tmdb.org/t/p/original${poster_path}` : null,
     rating: vote_average,
@@ -52,7 +52,7 @@ export const pickShortMoviesData = (movies = []) => {
 };
 
 export const pickMoviesPageFields = ({
-  id,
+  _id,
   title,
   poster_path,
   backdrop_path,
@@ -64,7 +64,7 @@ export const pickMoviesPageFields = ({
   runtime,
   adult,
 }) => ({
-  id,
+  id: _id,
   title,
   backdrop_path: backdrop_path ? `https://image.tmdb.org/t/p/original${backdrop_path}` : null,
   poster: poster_path ? `https://image.tmdb.org/t/p/original${poster_path}` : null,
@@ -78,7 +78,7 @@ export const pickMoviesPageFields = ({
 });
 
 export const pickTVShowPageFields = ({
-  id,
+  _id,
   title,
   poster_path,
   backdrop_path,
@@ -94,7 +94,7 @@ export const pickTVShowPageFields = ({
   media_type,
   adult,
 }) => ({
-  id,
+  id: _id,
   title,
   backdrop_path: backdrop_path ? `https://image.tmdb.org/t/p/original${backdrop_path}` : null,
   poster: poster_path ? `https://image.tmdb.org/t/p/original${poster_path}` : null,

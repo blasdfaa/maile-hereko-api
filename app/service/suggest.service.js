@@ -10,13 +10,13 @@ export const findSuggestedMovies = async ({ query, page = 1, limit = 10 }) => {
   const aggregate = movieModel.aggregate([
     { $unionWith: { coll: 'series' } },
     // Получить указанные поля
-    { $project: { _id: 0, id: 1, title: 1, poster_path: 1, vote_average: 1, media_type: 1, adult: 1 } },
+    { $project: { _id: 1, title: 1, poster_path: 1, vote_average: 1, media_type: 1, adult: 1 } },
     // Получить документы которые посоветовали.
-    { $match: { id: { $in: suggestedMoviesIds } } },
+    { $match: { _id: { $in: suggestedMoviesIds } } },
     // Если не указан параметр для поиска, вернутся все фильмы которые имеют заголовок
     { $match: { title: query ? { $regex: query, $options: 'i' } : { $exists: true } } },
     // Добавить поле "is_watched" просмотренным фильмам
-    { $addFields: { is_watched: { $cond: [{ $in: ['$id', watchedMoviesIds] }, true, false] } } },
+    { $addFields: { is_watched: { $cond: [{ $in: ['$_id', watchedMoviesIds] }, true, false] } } },
     { $sort: { title: 1, _id: 1 } },
   ]);
 
