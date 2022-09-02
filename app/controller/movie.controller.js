@@ -58,8 +58,8 @@ export const getById = (type) => async (req, res) => {
       return res.status(HTTP_STATUS.notFound).json({ ok: false, message: 'Movie not found' });
     }
 
-    const result = type === 'movie' ? pickMoviesPageFields(movie) : pickTVShowPageFields(movie);
-    return res.status(HTTP_STATUS.ok).json({ ok: true, ...result });
+    const results = type === 'movie' ? pickMoviesPageFields(movie) : pickTVShowPageFields(movie);
+    return res.status(HTTP_STATUS.ok).json({ ok: true, ...results });
   } catch (error) {
     return res
       .status(HTTP_STATUS.serverError)
@@ -75,10 +75,11 @@ export const getBySearch = async (req, res) => {
     const limit = req.query.limit;
 
     const movies = await searchByQuery(query, page, limit);
-    const result = { ...movies, result: pickShortMoviesData(movies.result) };
+    const results = { ...movies, results: pickShortMoviesData(movies.results) };
 
-    return res.status(HTTP_STATUS.ok).json({ ok: true, ...result });
+    return res.status(HTTP_STATUS.ok).json({ ok: true, ...results });
   } catch (error) {
+    console.error('error: ', error);
     return res.status(HTTP_STATUS.serverError).json({ ok: false, message: 'Server error' });
   }
 };
