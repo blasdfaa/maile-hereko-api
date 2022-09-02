@@ -16,7 +16,9 @@ import { searchBy } from '../utils/searchBy.js';
 export const getWatched = async (req, res) => {
   try {
     const author = await findAuthor();
-    if (!author) return res.status(HTTP_STATUS.notFound).json({ ok: false, message: 'User not found' });
+    if (!author) {
+      return res.status(HTTP_STATUS.notFound).json({ ok: false, message: 'User not found' });
+    }
 
     const watchedMovies = await getMoviesByIds(author.movies_ids);
     const watchedTVShows = await getTVShowsByIds(author.tv_shows_ids);
@@ -34,28 +36,34 @@ export const getWatched = async (req, res) => {
         .filter(filterBy('media_type', searchMediaType));
     }
 
-    res.status(HTTP_STATUS.ok).json({ ok: true, results: pickShortMoviesData(searchResult) });
+    return res.status(HTTP_STATUS.ok).json({ ok: true, results: pickShortMoviesData(searchResult) });
   } catch (error) {
-    console.error('error: ', error);
-    res.status(HTTP_STATUS.serverError).json({ ok: false, message: 'Failed to get movies. Try again' });
+    return res
+      .status(HTTP_STATUS.serverError)
+      .json({ ok: false, message: 'Failed to get movies. Try again' });
   }
 };
 
 export const getById = (type) => async (req, res) => {
   try {
     const author = await findAuthor();
-    if (!author) return res.status(HTTP_STATUS.notFound).json({ ok: false, message: 'User not found' });
+    if (!author) {
+      return res.status(HTTP_STATUS.notFound).json({ ok: false, message: 'User not found' });
+    }
 
     const movieId = req.params.id;
 
     const movie = type === 'movie' ? await getOneMovieById(movieId) : await getOneTVShowById(movieId);
-    if (!movie) return res.status(HTTP_STATUS.notFound).json({ ok: false, message: 'Movie not found' });
+    if (!movie) {
+      return res.status(HTTP_STATUS.notFound).json({ ok: false, message: 'Movie not found' });
+    }
 
     const result = type === 'movie' ? pickMoviesPageFields(movie) : pickTVShowPageFields(movie);
-    res.status(HTTP_STATUS.ok).json({ ok: true, ...result });
+    return res.status(HTTP_STATUS.ok).json({ ok: true, ...result });
   } catch (error) {
-    console.error('error: ', error);
-    res.status(HTTP_STATUS.serverError).json({ ok: false, message: 'Failed to get movies. Try again' });
+    return res
+      .status(HTTP_STATUS.serverError)
+      .json({ ok: false, message: 'Failed to get movies. Try again' });
   }
 };
 
@@ -69,8 +77,8 @@ export const getBySearch = async (req, res) => {
     const movies = await searchByQuery(query, page, limit);
     const result = { ...movies, result: pickShortMoviesData(movies.result) };
 
-    res.status(HTTP_STATUS.ok).json({ ok: true, ...result });
+    return res.status(HTTP_STATUS.ok).json({ ok: true, ...result });
   } catch (error) {
-    console.error('error: ', error);
+    return res.status(HTTP_STATUS.serverError).json({ ok: false, message: 'Server error' });
   }
 };

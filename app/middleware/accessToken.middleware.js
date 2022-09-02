@@ -9,7 +9,6 @@ export default (req, res, next) => {
 
     return next();
   } catch (error) {
-    console.error('error: ', error);
     return res.status(HTTP_STATUS.unauthorized).json({ ok: false, message: 'Access denied' });
   }
 };

@@ -12,8 +12,9 @@ export const doSuggest = async (req, res) => {
 
     // Вернуть ошибку если фильм с таким айди уже был предложен
     if (author[updatedKey].includes(id)) {
-      res.status(HTTP_STATUS.badRequest).json({ ok: false, message: 'Film has already been suggested' });
-      return;
+      return res
+        .status(HTTP_STATUS.badRequest)
+        .json({ ok: false, message: 'Film has already been suggested' });
     }
 
     await author
@@ -27,25 +28,24 @@ export const doSuggest = async (req, res) => {
       )
       .exec();
 
-    res.status(HTTP_STATUS.ok).json({ ok: true });
+    return res.status(HTTP_STATUS.ok).json({ ok: true });
   } catch (e) {
     console.error(e);
-    res.status(HTTP_STATUS.serverError).json({ ok: false, message: 'Server error' });
+    return res.status(HTTP_STATUS.serverError).json({ ok: false, message: 'Server error' });
   }
 };
 
 export const getSuggestedMovies = async (req, res) => {
   try {
-    const movieType = req.query.movie_type;
     const searchQuery = req.query.s;
     const page = req.query.page;
     const limit = req.query.limit;
 
-    const result = await findSuggestedMovies({ type: movieType, query: searchQuery, limit, page });
+    const result = await findSuggestedMovies({ query: searchQuery, limit, page });
 
-    res.status(HTTP_STATUS.ok).json({ ok: true, ...result });
+    return res.status(HTTP_STATUS.ok).json({ ok: true, ...result });
   } catch (e) {
     console.error(e);
-    res.status(HTTP_STATUS.serverError).json({ ok: false, message: 'Server error' });
+    return res.status(HTTP_STATUS.serverError).json({ ok: false, message: 'Server error' });
   }
 };

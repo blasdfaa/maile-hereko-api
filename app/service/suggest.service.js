@@ -1,16 +1,10 @@
 import authorModel from '../model/author.model.js';
 import { movieModel } from '../model/movie.model.js';
-import { MOVIE_TYPE } from '../utils/constants.js';
 
-export const findSuggestedMovies = async ({ query, type, page = 1, limit = 10 }) => {
+export const findSuggestedMovies = async ({ query, page = 1, limit = 10 }) => {
   const author = await authorModel.findOne({}).lean();
 
-  const ids =
-    type === MOVIE_TYPE.movie
-      ? author.suggested_movies_ids
-      : type === MOVIE_TYPE.tv
-      ? author.suggested_tv_ids
-      : [...author.suggested_movies_ids, ...author.suggested_tv_ids];
+  const ids = [...author.suggested_movies_ids, ...author.suggested_tv_ids];
 
   const aggregate = movieModel.aggregate([
     { $unionWith: { coll: 'series' } },

@@ -43,7 +43,7 @@ export const movieModel = mongoose.model('Movie', movieSchema, 'movies');
 
 movieModel.aggregatePaginate.options = {
   customLabels: {
-    docs: 'result',
+    docs: 'results',
     totalDocs: 'totalItems',
   },
 };
