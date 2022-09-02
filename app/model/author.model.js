@@ -1,6 +1,6 @@
 import mongoose from 'mongoose';
 
-const authorSchema = mongoose.Schema({
+const authorSchema = new mongoose.Schema({
   email: { type: String, required: true, unique: true },
   password_hash: { type: String, required: true },
   movies_ids: [Number],

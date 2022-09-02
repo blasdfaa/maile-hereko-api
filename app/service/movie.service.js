@@ -28,12 +28,13 @@ export const searchByQuery = async (query, page = 1, limit = 10) => {
 };
 
 export const pickShortMoviesData = (movies = []) => {
-  return movies.map(({ id, title, poster_path, vote_average, media_type }) => ({
+  return movies.map(({ id, title, poster_path, vote_average, media_type, ...other }) => ({
     id,
     title,
     poster: poster_path ? `https://image.tmdb.org/t/p/original${poster_path}` : null,
     rating: vote_average,
     media_type,
+    ...other,
   }));
 };
 

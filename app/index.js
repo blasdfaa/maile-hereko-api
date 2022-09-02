@@ -2,9 +2,7 @@ import 'dotenv/config';
 
 import cors from 'cors';
 import express from 'express';
-import fs from 'fs';
 import mongoose from 'mongoose';
-import swaggerUI from 'swagger-ui-express';
 
 import authRouter from './routes/auth.route.js';
 import movieRouter from './routes/movie.route.js';
@@ -31,13 +29,9 @@ app.use('/api', authRouter);
 app.use('/api', movieRouter);
 app.use('/api', suggestRouter);
 
-// Swagger
-const swaggerFile = JSON.parse(fs.readFileSync('./app/swagger_docs.json'));
-app.use('/docs', swaggerUI.serve, swaggerUI.setup(swaggerFile, { explorer: true }));
-
 // 404
 app.use((_, res) => {
-  res.status(404).json({ ok: false, message: 'endpoint not found' });
+  return res.status(404).json({ ok: false, message: 'endpoint not found' });
 });
 
 app.listen(PORT, (err) => {

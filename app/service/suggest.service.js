@@ -20,5 +20,6 @@ export const findSuggestedMovies = async ({ query, type, page = 1, limit = 10 })
     { $match: { title: query ? { $regex: query, $options: 'i' } : { $exists: true } } },
     { $sort: { title: 1, _id: 1 } },
   ]);
+
   return movieModel.aggregatePaginate(aggregate, { page, limit });
 };

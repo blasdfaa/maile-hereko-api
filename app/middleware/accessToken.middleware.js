@@ -1,16 +1,13 @@
-import jwt from 'jsonwebtoken';
-
 import { HTTP_STATUS } from '../utils/constants.js';
 
 export default (req, res, next) => {
   try {
     const token = (req.headers.authorization || '').replace(/Bearer\s?/, '');
-    if (!token) return res.status(HTTP_STATUS.unauthorized).json({ ok: false, message: 'Access denied' });
+    if (!token) {
+      return res.status(HTTP_STATUS.unauthorized).json({ ok: false, message: 'Access denied' });
+    }
 
-    const decodedUser = jwt.verify(token, 'secret');
-    req.userId = decodedUser.id;
-
-    next();
+    return next();
   } catch (error) {
     console.error('error: ', error);
     return res.status(HTTP_STATUS.unauthorized).json({ ok: false, message: 'Access denied' });

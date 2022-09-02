@@ -14,7 +14,6 @@ import { filterBy } from '../utils/filterBy.js';
 import { searchBy } from '../utils/searchBy.js';
 
 export const getWatched = async (req, res) => {
-  // #swagger.tags = ['Auth']
   try {
     const author = await findAuthor();
     if (!author) return res.status(HTTP_STATUS.notFound).json({ ok: false, message: 'User not found' });
@@ -43,7 +42,6 @@ export const getWatched = async (req, res) => {
 };
 
 export const getById = (type) => async (req, res) => {
-  // #swagger.tags = ['Auth']
   try {
     const author = await findAuthor();
     if (!author) return res.status(HTTP_STATUS.notFound).json({ ok: false, message: 'User not found' });
@@ -63,12 +61,13 @@ export const getById = (type) => async (req, res) => {
 
 export const getBySearch = async (req, res) => {
   try {
-    // example.com/api/search?q=someValue
-    const query = req.query.q;
+    // example.com/api/search?s=someValue
+    const query = req.query.s;
     const page = req.query.page;
     const limit = req.query.limit;
 
-    const result = await searchByQuery(query, page, limit);
+    const movies = await searchByQuery(query, page, limit);
+    const result = { ...movies, result: pickShortMoviesData(movies.result) };
 
     res.status(HTTP_STATUS.ok).json({ ok: true, ...result });
   } catch (error) {
