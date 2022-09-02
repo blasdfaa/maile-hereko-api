@@ -4,14 +4,19 @@ import { movieModel } from '../model/movie.model.js';
 export const findSuggestedMovies = async ({ query, page = 1, limit = 10 }) => {
   const author = await authorModel.findOne({}).lean();
 
-  const ids = [...author.suggested_movies_ids, ...author.suggested_tv_ids];
+  const suggestedMoviesIds = [...author.suggested_movies_ids, ...author.suggested_tv_ids];
+  const watchedMoviesIds = [...author.movies_ids, ...author.tv_shows_ids];
 
   const aggregate = movieModel.aggregate([
     { $unionWith: { coll: 'series' } },
+    // Получить указанные поля
     { $project: { _id: 0, id: 1, title: 1, poster_path: 1, vote_average: 1, media_type: 1, adult: 1 } },
-    { $match: { id: { $in: ids } } },
+    // Получить документы которые посоветовали.
+    { $match: { id: { $in: suggestedMoviesIds } } },
     // Если не указан параметр для поиска, вернутся все фильмы которые имеют заголовок
     { $match: { title: query ? { $regex: query, $options: 'i' } : { $exists: true } } },
+    // Добавить поле "is_watched" просмотренным фильмам
+    { $addFields: { is_watched: { $cond: [{ $in: ['$id', watchedMoviesIds] }, true, false] } } },
     { $sort: { title: 1, _id: 1 } },
   ]);
 
