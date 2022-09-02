@@ -29,10 +29,10 @@ export const searchByQuery = async (query, page = 1, limit = 10) => {
     { $project: { _id: 0, id: 1, title: 1, poster_path: 1, vote_average: 1, media_type: 1, adult: 1 } },
     // Получить документы которые ещё не посоветовали.
     { $match: { id: { $nin: suggestedMoviesIds } } },
-    // Добавить поле "is_watched" просмотренным фильмам
-    { $addFields: { is_watched: { $cond: [{ $in: ['$id', watchedMoviesIds] }, true, false] } } },
     // Если не указан параметр для поиска, вернутся все фильмы которые имеют заголовок
     { $match: { title: query ? { $regex: query, $options: 'i' } : { $exists: true } } },
+    // Добавить поле "is_watched" просмотренным фильмам
+    { $addFields: { is_watched: { $cond: [{ $in: ['$id', watchedMoviesIds] }, true, false] } } },
     { $sort: { title: 1, _id: 1 } },
   ]);
 
