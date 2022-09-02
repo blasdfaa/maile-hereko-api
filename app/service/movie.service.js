@@ -1,3 +1,4 @@
+import authorModel from '../model/author.model.js';
 import { movieModel, tvShowModel } from '../model/movie.model.js';
 
 export const getOneMovieById = async (id) => {
@@ -17,9 +18,19 @@ export const getTVShowsByIds = async (ids) => {
 };
 
 export const searchByQuery = async (query, page = 1, limit = 10) => {
+  const author = await authorModel.findOne({}).lean();
+
+  const suggestedMoviesIds = [...author.suggested_movies_ids, ...author.suggested_tv_ids];
+  const watchedMoviesIds = [...author.movies_ids, ...author.tv_shows_ids];
+
   const aggregate = movieModel.aggregate([
     { $unionWith: { coll: 'series' } },
-    { $project: { _id: 0, id: 1, title: 1, poster_path: 1, vote_average: 1, media_type: 1 } },
+    // Получить указанные поля
+    { $project: { _id: 0, id: 1, title: 1, poster_path: 1, vote_average: 1, media_type: 1, adult: 1 } },
+    // Получить документы которые ещё не посоветовали.
+    { $match: { id: { $nin: suggestedMoviesIds } } },
+    // Добавить поле "is_watched" просмотренным фильмам
+    { $addFields: { is_watched: { $cond: [{ $in: ['$id', watchedMoviesIds] }, true, false] } } },
     // Если не указан параметр для поиска, вернутся все фильмы которые имеют заголовок
     { $match: { title: query ? { $regex: query, $options: 'i' } : { $exists: true } } },
     { $sort: { title: 1, _id: 1 } },
@@ -29,12 +40,13 @@ export const searchByQuery = async (query, page = 1, limit = 10) => {
 };
 
 export const pickShortMoviesData = (movies = []) => {
-  return movies.map(({ id, title, poster_path, vote_average, media_type, ...other }) => ({
+  return movies.map(({ id, title, poster_path, vote_average, media_type, adult, ...other }) => ({
     id,
     title,
     poster: poster_path ? `https://image.tmdb.org/t/p/original${poster_path}` : null,
     rating: vote_average,
     media_type,
+    adult,
     ...other,
   }));
 };
@@ -50,6 +62,7 @@ export const pickMoviesPageFields = ({
   media_type,
   release_date,
   runtime,
+  adult,
 }) => ({
   id,
   title,
@@ -61,6 +74,7 @@ export const pickMoviesPageFields = ({
   media_type,
   release_date,
   runtime,
+  adult,
 });
 
 export const pickTVShowPageFields = ({
@@ -78,6 +92,7 @@ export const pickTVShowPageFields = ({
   genres,
   overview,
   media_type,
+  adult,
 }) => ({
   id,
   title,
@@ -93,4 +108,5 @@ export const pickTVShowPageFields = ({
   genres,
   description: overview,
   media_type,
+  adult,
 });

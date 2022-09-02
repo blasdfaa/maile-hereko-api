@@ -8,7 +8,7 @@ export const findSuggestedMovies = async ({ query, page = 1, limit = 10 }) => {
 
   const aggregate = movieModel.aggregate([
     { $unionWith: { coll: 'series' } },
-    { $project: { _id: 0, id: 1, title: 1, poster_path: 1, vote_average: 1, media_type: 1 } },
+    { $project: { _id: 0, id: 1, title: 1, poster_path: 1, vote_average: 1, media_type: 1, adult: 1 } },
     { $match: { id: { $in: ids } } },
     // Если не указан параметр для поиска, вернутся все фильмы которые имеют заголовок
     { $match: { title: query ? { $regex: query, $options: 'i' } : { $exists: true } } },
