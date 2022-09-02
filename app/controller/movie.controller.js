@@ -22,6 +22,7 @@ export const getWatched = async (req, res) => {
 
     const watchedMovies = await getMoviesByIds(author.movies_ids);
     const watchedTVShows = await getTVShowsByIds(author.tv_shows_ids);
+
     let searchResult = [...watchedMovies, ...watchedTVShows];
 
     const hasQueryParams = Object.keys(req.query).length > 0;

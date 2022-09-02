@@ -9,12 +9,14 @@ export const getOneTVShowById = async (id) => {
   return tvShowModel.findById(id).lean();
 };
 
-export const getMoviesByIds = async (ids) => {
-  return movieModel.find({ _id: { $in: ids } }).exec();
+export const getMoviesByIds = async (ids = []) => {
+  // TODO: Здесь лучше сразу выбрать какие поля вернуть
+  return movieModel.find({ _id: { $in: ids } }).lean();
 };
 
-export const getTVShowsByIds = async (ids) => {
-  return tvShowModel.find({ _id: { $in: ids } }).exec();
+export const getTVShowsByIds = async (ids = []) => {
+  // TODO: Здесь лучше сразу выбрать какие поля вернуть
+  return tvShowModel.find({ _id: { $in: ids } }).lean();
 };
 
 export const searchByQuery = async (query, page = 1, limit = 10) => {
@@ -40,14 +42,14 @@ export const searchByQuery = async (query, page = 1, limit = 10) => {
 };
 
 export const pickShortMoviesData = (movies = []) => {
-  return movies.map(({ _id, title, poster_path, vote_average, media_type, adult, ...other }) => ({
+  return movies.map(({ _id, title, poster_path, vote_average, media_type, adult, is_watched }) => ({
     id: _id,
     title,
     poster: poster_path ? `https://image.tmdb.org/t/p/original${poster_path}` : null,
     rating: vote_average,
     media_type,
     adult,
-    ...other,
+    is_watched,
   }));
 };
 

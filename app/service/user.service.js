@@ -3,7 +3,7 @@ import pick from 'lodash.pick';
 import authorModel from '../model/author.model.js';
 
 export const findAuthor = async () => {
-  return await authorModel.findOne({});
+  return authorModel.findOne({});
 };
 
 export const getAuthorData = async () => {
