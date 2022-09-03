@@ -12,22 +12,13 @@ export const doSuggest = async (req, res) => {
     const author = await findAuthor();
 
     // Вернуть ошибку если фильм с таким айди уже был предложен
-    if (author[updatedKey].includes(Number(id))) {
+    if (author[updatedKey].includes(id)) {
       return res
         .status(HTTP_STATUS.badRequest)
         .json({ ok: false, message: 'Film has already been suggested' });
     }
 
-    await author
-      .updateOne(
-        {
-          $push: {
-            [updatedKey]: Number(id),
-          },
-        },
-        { new: true, upsert: true },
-      )
-      .exec();
+    await author.updateOne({ $push: { [updatedKey]: id } }, { new: true, upsert: true }).exec();
 
     return res.status(HTTP_STATUS.ok).json({ ok: true });
   } catch (e) {
