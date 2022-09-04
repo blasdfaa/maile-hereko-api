@@ -10,7 +10,7 @@ const movieRouter = Router();
 movieRouter.get(
   '/watched',
   validate([
-    query('movie_type').optional().isIn(Object.values(MOVIE_TYPE)).withMessage('Not found'),
+    query('media_type').optional().isIn(Object.values(MOVIE_TYPE)).withMessage('Not found'),
     query('s').optional().isString(),
   ]),
   movieController.getWatched,
