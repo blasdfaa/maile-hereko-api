@@ -1,5 +1,3 @@
-import { validationResult } from 'express-validator';
-
 import {
   getMoviesByIds,
   getOneMovieById,
@@ -13,17 +11,10 @@ import {
 import { findAuthor } from '../service/user.service.js';
 import { HTTP_STATUS } from '../utils/constants.js';
 import { filterBy } from '../utils/filterBy.js';
-import { formatQueryValidationMessage } from '../utils/formatValidationMessage.js';
 import { searchBy } from '../utils/searchBy.js';
 
 export const getWatched = async (req, res) => {
   try {
-    const errors = validationResult(req).formatWith(formatQueryValidationMessage);
-
-    if (!errors.isEmpty()) {
-      return res.status(HTTP_STATUS.notFound).json({ ok: false, message: errors.array().toString() });
-    }
-
     const author = await findAuthor();
     if (!author) {
       return res.status(HTTP_STATUS.notFound).json({ ok: false, message: 'User not found' });
