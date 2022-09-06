@@ -27,6 +27,6 @@ authRouter.post(
 );
 
 authRouter.get('/auth/me', validateToken, authController.getProfile);
-authRouter.get('/auth/logout', validateToken, authController.logout);
+authRouter.delete('/auth/logout', validateToken, authController.logout);
 
 export default authRouter;
