@@ -87,7 +87,7 @@ export const getBySearch = async (req, res) => {
 };
 
 export const markAsWatched = async (req, res) => {
-  const { id, media_type } = req.params;
+  const { id, media_type } = req.body;
 
   const updatedWatchedKey = media_type === MOVIE_TYPE.tv ? 'tv_shows_ids' : 'movies_ids';
   const updatedSuggestedKey = media_type === MOVIE_TYPE.tv ? 'suggested_tv_ids' : 'suggested_movies_ids';

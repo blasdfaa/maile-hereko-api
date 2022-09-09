@@ -1,5 +1,5 @@
 import { Router } from 'express';
-import { param, query } from 'express-validator';
+import { body, query } from 'express-validator';
 
 import * as movieController from '../controller/movie.controller.js';
 import { validate } from '../middleware/validate.middleware.js';
@@ -16,9 +16,9 @@ movieRouter.get(
   movieController.getWatched,
 );
 
-movieRouter.patch(
-  '/watched/:media_type/:id',
-  validate([param('media_type').isIn(Object.values(MOVIE_TYPE))]),
+movieRouter.post(
+  '/watched',
+  validate([body('media_type').isIn(Object.values(MOVIE_TYPE))]),
   movieController.markAsWatched,
 );
 
