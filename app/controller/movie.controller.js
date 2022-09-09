@@ -1,3 +1,4 @@
+import authorModel from '../model/author.model.js';
 import {
   getMoviesByIds,
   getOneMovieById,
@@ -9,7 +10,7 @@ import {
   searchByQuery,
 } from '../service/movie.service.js';
 import { findAuthor } from '../service/user.service.js';
-import { HTTP_STATUS } from '../utils/constants.js';
+import { HTTP_STATUS, MOVIE_TYPE } from '../utils/constants.js';
 import { filterBy } from '../utils/filterBy.js';
 import { searchBy } from '../utils/searchBy.js';
 
@@ -79,6 +80,30 @@ export const getBySearch = async (req, res) => {
     const results = { ...movies, results: pickShortMoviesData(movies.results) };
 
     return res.status(HTTP_STATUS.ok).json({ ok: true, ...results });
+  } catch (error) {
+    console.error('error: ', error);
+    return res.status(HTTP_STATUS.serverError).json({ ok: false, message: 'Server error' });
+  }
+};
+
+export const markAsWatched = async (req, res) => {
+  const { id, media_type } = req.params;
+
+  const updatedWatchedKey = media_type === MOVIE_TYPE.tv ? 'tv_shows_ids' : 'movies_ids';
+  const updatedSuggestedKey = media_type === MOVIE_TYPE.tv ? 'suggested_tv_ids' : 'suggested_movies_ids';
+
+  const author = await authorModel.findOne({});
+
+  // Вернуть ошибку если фильм с таким айди уже находится в просмотренных
+  if (author[updatedWatchedKey].includes(id)) {
+    return res.status(HTTP_STATUS.badRequest).json({ ok: false, message: 'Movie has already been watched' });
+  }
+
+  await author.updateOne({ $pull: { [updatedSuggestedKey]: id } }).exec();
+  await author.updateOne({ $push: { [updatedWatchedKey]: id } }).exec();
+
+  try {
+    return res.status(HTTP_STATUS.ok).json({ ok: true });
   } catch (error) {
     console.error('error: ', error);
     return res.status(HTTP_STATUS.serverError).json({ ok: false, message: 'Server error' });
