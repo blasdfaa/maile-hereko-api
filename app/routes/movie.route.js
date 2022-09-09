@@ -16,15 +16,15 @@ movieRouter.get(
   movieController.getWatched,
 );
 
+movieRouter.patch(
+  '/watched/:media_type/:id',
+  validate([param('media_type').isIn(Object.values(MOVIE_TYPE))]),
+  movieController.markAsWatched,
+);
+
 movieRouter.get('/search', movieController.getBySearch);
 
 movieRouter.get('/tv/:id', movieController.getById('tv'));
 movieRouter.get('/movie/:id', movieController.getById('movie'));
-
-movieRouter.patch(
-  '/:media_type/:id',
-  validate([param('media_type').isIn(Object.values(MOVIE_TYPE))]),
-  movieController.markAsWatched,
-);
 
 export default movieRouter;
