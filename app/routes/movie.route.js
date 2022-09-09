@@ -3,6 +3,7 @@ import { body, query } from 'express-validator';
 
 import * as movieController from '../controller/movie.controller.js';
 import { validate } from '../middleware/validate.middleware.js';
+import { validateToken } from '../middleware/validateToken.middleware.js';
 import { MOVIE_TYPE } from '../utils/constants.js';
 
 const movieRouter = Router();
@@ -18,6 +19,7 @@ movieRouter.get(
 
 movieRouter.post(
   '/watched',
+  validateToken,
   validate([body('media_type').isIn(Object.values(MOVIE_TYPE))]),
   movieController.markAsWatched,
 );
