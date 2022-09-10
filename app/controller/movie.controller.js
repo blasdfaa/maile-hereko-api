@@ -1,9 +1,8 @@
 import authorModel from '../model/author.model.js';
 import {
-  getMoviesByIds,
   getOneMovieById,
   getOneTVShowById,
-  getTVShowsByIds,
+  getWatchedMovies,
   pickMoviesPageFields,
   pickShortMoviesData,
   pickTVShowPageFields,
@@ -11,8 +10,6 @@ import {
 } from '../service/movie.service.js';
 import { findAuthor } from '../service/user.service.js';
 import { HTTP_STATUS, MOVIE_TYPE } from '../utils/constants.js';
-import { filterBy } from '../utils/filterBy.js';
-import { searchBy } from '../utils/searchBy.js';
 
 export const getWatched = async (req, res) => {
   try {
@@ -21,24 +18,12 @@ export const getWatched = async (req, res) => {
       return res.status(HTTP_STATUS.notFound).json({ ok: false, message: 'User not found' });
     }
 
-    const watchedMovies = await getMoviesByIds(author.movies_ids);
-    const watchedTVShows = await getTVShowsByIds(author.tv_shows_ids);
+    const { page, s, media_type, limit } = req.query;
 
-    let searchResult = [...watchedMovies, ...watchedTVShows];
+    const movies = await getWatchedMovies({ mediaType: media_type, query: s, page, limit });
+    const results = { ...movies, results: pickShortMoviesData(movies.results) };
 
-    const hasQueryParams = Object.keys(req.query).length > 0;
-    const searchQuery = await req.query;
-
-    if (hasQueryParams) {
-      const searchString = searchQuery.s?.toLowerCase() ?? '';
-      const searchMediaType = searchQuery.media_type?.toLowerCase() ?? '';
-
-      searchResult = searchResult
-        .filter(searchBy('original_title', searchString))
-        .filter(filterBy('media_type', searchMediaType));
-    }
-
-    return res.status(HTTP_STATUS.ok).json({ ok: true, results: pickShortMoviesData(searchResult) });
+    return res.status(HTTP_STATUS.ok).json({ ok: true, ...results });
   } catch (error) {
     return res
       .status(HTTP_STATUS.serverError)

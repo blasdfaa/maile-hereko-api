@@ -9,14 +9,24 @@ export const getOneTVShowById = async (id) => {
   return tvShowModel.findById(id).lean();
 };
 
-export const getMoviesByIds = async (ids = []) => {
-  // TODO: Здесь лучше сразу выбрать какие поля вернуть
-  return movieModel.find({ _id: { $in: ids } }).lean();
-};
+export const getWatchedMovies = async ({ mediaType, query, page = 1, limit = 10 }) => {
+  const author = await authorModel.findOne({}).lean();
 
-export const getTVShowsByIds = async (ids = []) => {
-  // TODO: Здесь лучше сразу выбрать какие поля вернуть
-  return tvShowModel.find({ _id: { $in: ids } }).lean();
+  const watchedMoviesIds = [...author.movies_ids, ...author.tv_shows_ids];
+
+  const aggregate = movieModel.aggregate([
+    { $unionWith: { coll: 'series' } },
+    // Получить указанные поля
+    { $project: { _id: 1, title: 1, poster_path: 1, vote_average: 1, media_type: 1, adult: 1 } },
+    // Получить видео для выбранного `media_type`
+    { $match: { media_type: mediaType ?? { $exists: true } } },
+    // Получить только просмотренные видео
+    { $match: { _id: { $in: watchedMoviesIds } } },
+    // Если не указан параметр для поиска, вернутся все фильмы которые имеют заголовок
+    { $match: { title: query ? { $regex: query, $options: 'i' } : { $exists: true } } },
+  ]);
+
+  return movieModel.aggregatePaginate(aggregate, { page, limit });
 };
 
 export const searchByQuery = async (query, page = 1, limit = 10) => {
